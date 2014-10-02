@@ -4,5 +4,7 @@
     <string name="app_name">ParseAndroid</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_create_todo">CreateTodo</string>
+    <string name="title_activity_to_do_list">ToDoListActivity</string>
 
 </resources>
