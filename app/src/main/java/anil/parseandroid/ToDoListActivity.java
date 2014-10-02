@@ -7,10 +7,13 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.parse.ParseException;
@@ -92,9 +95,87 @@ public class ToDoListActivity extends ListActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.to_do_list, menu);
-        return true;
+        boolean result = super.onCreateOptionsMenu(menu);
+        menu.add(0, INSERT_ID, 0, R.string.menu_insert);
+        return result;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0,DELETE_ID,0, R.string.menu_delete);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (intent == null) {
+            return;
+        }
+
+        final Bundle extras = intent.getExtras();
+
+        switch (requestCode) {
+            case ACTIVITY_CREATE:
+                new RemoteDataTask() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        String name = extras.getString("name");
+                        ParseObject todo = new ParseObject("Todo");
+                        todo.put("name", name);
+                        try{
+                            todo.save();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        super.doInBackground();
+                        return null;
+                    }
+                }.execute();
+                break;
+            case ACTIVITY_EDIT:
+                final ParseObject todo;
+                todo = todos.get(extras.getInt("position"));
+                todo.put("name", extras.getString("name"));
+
+                new RemoteDataTask(){
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        try{
+                            todo.save();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        return super.doInBackground(voids);
+                    }
+                }.execute();
+                break;
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case DELETE_ID:
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+                final ParseObject todo = todos.get(info.position);
+
+                new RemoteDataTask(){
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        try {
+                            todo.delete();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        super.doInBackground();
+                        return null;
+                    }
+                }.execute();
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     @Override
@@ -102,10 +183,21 @@ public class ToDoListActivity extends ListActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch(item.getItemId()){
+            case INSERT_ID:
+                createTodo();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        Intent i = new Intent(this, CreateTodo.class);
+
+        i.putExtra("name", todos.get(position).getString("name").toString());
+        i.putExtra("position", position);
+        startActivityForResult(i, ACTIVITY_EDIT);
     }
 }

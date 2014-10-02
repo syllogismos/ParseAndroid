@@ -7,4 +7,11 @@
     <string name="title_activity_create_todo">CreateTodo</string>
     <string name="title_activity_to_do_list">ToDoListActivity</string>
 
+    <string name="empty">There are no todo items.</string>
+    <string name="menu_insert">Add Todo</string>
+    <string name="name">Enter your todo</string>
+    <string name="confirm">Done</string>
+    <string name="create_todo">Create Todo</string>
+    <string name="menu_delete">Delete Todo</string>
+
 </resources>
