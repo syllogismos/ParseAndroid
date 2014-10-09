@@ -64,7 +64,7 @@ public class ToDoListActivity extends ListActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Todo");
-            query.orderByDescending("_created_at");
+            query.orderByDescending("createdAt");
 
             try {
                 todos = query.find();
