@@ -62,6 +62,7 @@
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Parse-1.6.0" level="project" />
+    <orderEntry type="library" exported="" name="Parse-1.7.0" level="project" />
   </component>
 </module>
 

@@ -21,5 +21,5 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile files('libs/Parse-1.6.0.jar')
+    compile files('libs/Parse-1.7.0.jar')
 }
